@@ -1,0 +1,11 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © techyankit199
+
+//@version=5
+
+indicator("3 cand stat", "candal stats",overlay = true)
+if close[1]>open[1] and close[2]>open[2] and close[3]<open[3]
+    label.new(bar_index, low, text="up", style=label.style_circle)
+
+if close[1]<open[1] and close[2]<open[2] and close[3]>open[3]
+    label.new(bar_index, low, text="down", style=label.style_diamond)
