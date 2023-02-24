@@ -19,6 +19,9 @@ Money=1/100*balance
 expirations_mode=1
 
 def place_order():
+    server_e = e.connect(IMAP,emailid,passward)
+    server_i = imaplib.IMAP4_SSL(IMAP)
+    server_i.login(emailid, passward)
     try:
         server_i.select("inbox")
         email_e = server_e.mail(server_e.listids(limit=1, criterion=None)[0])      #selecting top 1 email
