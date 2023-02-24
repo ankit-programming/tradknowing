@@ -1,9 +1,7 @@
-#this bot will take signal from email given by trading view
-#problem :- when we are runing while loop it print 1 output and not take continuiosly signal from email
 from iqoptionapi.stable_api import IQ_Option
 import easyimap as e
 import imaplib
-import time
+
 emailid = "tsignalmail@gmail.com"
 passward = "ztipkqtxgltshpqh"
 IMAP = 'imap.gmail.com'
@@ -22,7 +20,6 @@ expirations_mode=1
 
 def place_order():
     try:
-        server_i.listids()                                                     #for selcting all email present
         server_i.select("inbox")
         email_e = server_e.mail(server_e.listids(limit=1, criterion=None)[0])      #selecting top 1 email
         data_e = email_e.body                                                   #taking title of the email
@@ -45,12 +42,9 @@ def place_order():
                         server_i.store(num, '+FLAGS', r'(\Deleted)')
                         server_i.expunge()
                         print("E-mail deleted")
-                    time.sleep(60)
                 elif place_trade[0] ==False :
                     print("BUY ERROR",place_trade[1])
                 
-
-
 
             elif fd2[0] == "down":
                     place_trade = api.buy(Money,ACTIVES[0],"put",expirations_mode)
@@ -63,22 +57,14 @@ def place_order():
                             server_i.store(num, '+FLAGS', r'(\Deleted)')
                             server_i.expunge()
                             print("E-mail deleted")
-                        time.sleep(60)
                     elif place_trade[0] ==False :
                             print("BUY ERROR",place_trade[1])
                         
-
-                   
                 
         else :
             print("not a trade signal")
 
     except:
-         print("NO E-mail found")
-            
+        print("NO E-mail found")
 
-    
-
-while True:
-     place_order()
-
+place_order()
