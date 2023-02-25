@@ -1,45 +1,54 @@
 from iqoptionapi.stable_api import IQ_Option
-import easyimap as e
-import imaplib
+import easyimap as e #for reading email
+import imaplib#for deleting file
 
-emailid = "tsignalmail@gmail.com"
-passward = "ztipkqtxgltshpqh"
+try:#oopening id and pass file 
+    passfile = open('eurusd pass.txt', 'r')
+    idfile = open('eurusd id.txt', 'r')
+except:
+     print("FILE   ERROR","\n","ID and PASS FILE cant find")
+
+emailid = idfile.read()#"tsignalmail@gmail.com"
+passward = passfile.read()#"ztipkqtxgltshpqh"
 IMAP = 'imap.gmail.com'
 
+'''#makiing conection for easyimap and imaplib and iqoption
 server_e = e.connect(IMAP,emailid,passward)
 server_i = imaplib.IMAP4_SSL(IMAP)
-server_i.login(emailid, passward)
+server_i.login(emailid, passward)'''
 
 api=IQ_Option("techyankit199@gmail.com","ankitsaini2003")
 api.connect()#connect to iqoption
 
-curruncy = api.get_currency()
-balance = api.get_balance()
-Money=1/100*balance
-expirations_mode=1
+#curruncy = api.get_currency()#to knoe which curruncey we are using in account
 
 def place_order():
+    balance = api.get_balance()#to get balance of account
+    Money=1/100*balance #for traing with 1% of capital we have
+    expirations_mode=1
+    
+    #makiing conection for easyimap and imaplib and iqoption
     server_e = e.connect(IMAP,emailid,passward)
     server_i = imaplib.IMAP4_SSL(IMAP)
     server_i.login(emailid, passward)
     try:
-        server_i.select("inbox")
+        server_i.select("inbox")   #selecting inbox for rading email
         email_e = server_e.mail(server_e.listids(limit=1, criterion=None)[0])      #selecting top 1 email
         data_e = email_e.body                                                   #taking title of the email
         str_data = data_e.split()                                              #data will come in string so splitng it and making it in list to to make readin easy
     
-        if email_e.title == "Alert: ." or email_e.title == "Alert: candal stats: Any alert() function call" :
-            fd = str_data[666-1].split(">")
+        if email_e.title == "Alert: .":#setting condition for taking only "." titeld email
+            fd = str_data[666-1].split(">")  #email will have many element in list in which 666 is having our signal so we will split it and use only "BUY" or "SELL"
             fd2 = fd[1].split("<")
             print(fd2)
-            ACTIVES = str_data[345-1].split(">")
+            ACTIVES = str_data[345-1].split(">") #for taking curruncy pair name from data
             
             if fd2[0] == "up":
-                place_trade = api.buy(Money,ACTIVES[0],"call",expirations_mode)
+                place_trade = api.buy(Money,ACTIVES[0],"call",expirations_mode) #for placiing trade in  iq option broker
                 if place_trade[0] == True:
                     print("trade placed up")
                     #---------     for deleting mail ------------------
-                    typ, data_i = server_i.search(None, 'FROM "noreply@tradingview.com"') #Filter by sender
+                    typ, data_i = server_i.search(None, 'FROM "noreply@tradingview.com"') #Filter by sender email id
                     for num in data_i[0].split():
                         #deleting the mails
                         server_i.store(num, '+FLAGS', r'(\Deleted)')
@@ -63,11 +72,12 @@ def place_order():
                     elif place_trade[0] ==False :
                             print("BUY ERROR",place_trade[1])
                         
-                
+        
         else :
             print("not a trade signal")
 
     except:
         print("NO E-mail found")
+    server_i.logout()
+    server_e.quit()
 
-place_order()
