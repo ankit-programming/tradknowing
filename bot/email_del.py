@@ -1,7 +1,4 @@
-import tv_to_mail_connector
-from threading import Thread
 import imaplib#for deleting file
-
 
 def del_mail(pair):
     for i in range(5):
@@ -21,13 +18,3 @@ def del_mail(pair):
             server_i.store(num, '+FLAGS', r'(\Deleted)')
             server_i.expunge()
             print("E-mail deleted")
-
-
-#this algo will run once in at time at app runing but
-#it will deleting all mail from all ids and it will stop running
-
-'''pair = ["eurgbp","eurjpy","eurusd","gbpusd","usdjpy"]
-for i in pair:
-    print(i)
-    del_mail(i)'''
-
